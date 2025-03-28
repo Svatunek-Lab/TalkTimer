@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        #logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        #timer {
+            font-size: 35vw;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .reset-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .start-button {
+            background-color: #2196F3;
+            color: white;
+        }
+        .pause-button {
+            background-color: black;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+		
+		@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+		
+		.orbitron-label {
+			font-family: 'Orbitron', sans-serif;
+			font-size: 24px;
+			color: 6b6b6b5b;
+			padding: 2px 6px;
+			margin: 0;
+			line-height: 1.2;
+			    position: fixed;
+    bottom: 10px;
+    right: 10px;
+		}
+    </style>
+</head>
+<body>
+    <img id="logo" src="logo.png" alt="Logo" width="100">
+    <div id="timer">03:00</div>
+    <div class="button-container">
+        <button class="reset-button" onclick="resetTimer(180)">Reset 3 Minutes</button>
+        <button class="reset-button" onclick="resetTimer(120)">Reset 2 Minutes</button>
+        <button class="start-button" onclick="startTimer()">Start</button>
+        <button class="pause-button" onclick="pauseTimer()">||</button>
+    </div>
+	<div class="orbitron-label">svatunek // lab</div>
+    <audio id="endSound" src="buzzer.wav" preload="auto"></audio>
+
+
+    <script>
+
+        document.getElementById('logo').addEventListener('click', function() {
+            var audio = document.getElementById('endSound');
+            audio.play();
+        });
+
+        
+        let timerInterval;
+        let remainingTime;
+        let isPaused = true;
+
+        function resetTimer(duration) {
+            clearInterval(timerInterval);
+            remainingTime = duration;
+            isPaused = true;
+            updateDisplay(remainingTime);
+            changeBackgroundColor(remainingTime);
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval); // Clear any existing intervals
+            isPaused = false;
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    remainingTime--;
+                    updateDisplay(remainingTime);
+                    changeBackgroundColor(remainingTime);
+
+                    if (remainingTime <= 0) {
+                        clearInterval(timerInterval);
+                        document.getElementById('endSound').play();
+                    }
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            isPaused = !isPaused;
+        }
+
+        function updateDisplay(time) {
+            const minutes = String(Math.floor(time / 60)).padStart(2, '0');
+            const seconds = String(time % 60).padStart(2, '0');
+            document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+        }
+
+        function changeBackgroundColor(time) {
+            const body = document.body;
+            if (time <= 10) {
+                body.style.backgroundColor = 'darkred';
+                body.style.color = 'white';
+            } else if (time <= 20) {
+                body.style.backgroundColor = 'orange';
+                body.style.color = 'black';
+            } else if (time <= 30) {
+                body.style.backgroundColor = 'yellow';
+                body.style.color = 'black';
+            } else {
+                body.style.backgroundColor = '#f0f0f0';
+                body.style.color = 'black';
+            }
+        }
+
+        // Initialize timer to 3 minutes on load
+        resetTimer(180);
+    </script>
+</body>
+</html>
